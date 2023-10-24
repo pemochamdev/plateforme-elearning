@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for level in object.level_subject.all  %}
+    <a href="{% url "lesson_list" slug=level.slug niveau=object.slug %}"> {{level.name}} </a> <br>
+
+
+{% endfor %}
+<hr>
+<a href="{% url "level_list" %}">retour</a>
+
+{% endblock content %}

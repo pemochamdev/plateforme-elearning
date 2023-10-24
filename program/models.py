@@ -33,6 +33,7 @@ class Subject(models.Model):
     uuid = models.UUIDField(
         unique=True, 
         editable=False,
+        default = uuid.uuid4,
         max_length=10
     )
     name = models.CharField(
@@ -45,7 +46,7 @@ class Subject(models.Model):
         related_name='level_subject'
     )
     picture = models.ImageField(
-        upload_to=user_directory_path
+        upload_to="SUBJECTS"
     )
     description = models.TextField(
         max_length=500
@@ -53,11 +54,7 @@ class Subject(models.Model):
 
     def __str__(self):
         return self.name
-    
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
-    
+
     
     def get_image_subject(self):
         return mark_safe('<img src="%s" with="50" height="50" />' % (self.picture.url))
@@ -68,13 +65,16 @@ class Lesson(models.Model):
     uuid = models.UUIDField(
         unique=True, 
         editable=False, 
+        default = uuid.uuid4,
         max_length=10
         )
     name = models.CharField(max_length=100)
     slug = models.SlugField()
-    position = models.PositiveSmallIntegerField(verbose_name='CHAPTER ')
+    position = models.PositiveSmallIntegerField(
+        verbose_name='CHAPTER '
+    )
     video = models.FileField(
-        upload_to=user_directory_path
+        upload_to="LESSONS"
     )
     level = models.ForeignKey(
         Level, 
@@ -89,22 +89,22 @@ class Lesson(models.Model):
     subject = models.ForeignKey(
         Subject,
         on_delete=models.CASCADE,
-        related_name='subj_lesson'
+        related_name='lesson'
     )
     video = models.FileField(
-        upload_to=user_directory_path,
+        upload_to="VIDEO",
         blank=True, 
         null=True ,
         verbose_name="VIDEO"
     )
     fichier_pdf = models.FileField(
-        upload_to=user_directory_path, 
+        upload_to="FICHE_PDF", 
         blank=True, 
         null=True, 
         verbose_name="FICHE_PDF"
     )
     fiche_presentation = models.FileField(
-        upload_to=user_directory_path, 
+        upload_to="FICHE_PRESENTATION", 
         blank=True, 
         null=True, 
         verbose_name="FICHE_PRESENTATION"
@@ -113,9 +113,9 @@ class Lesson(models.Model):
     class Meta:
         ordering = ['-position']
     
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.slug = slugify(self.name)
+    #     super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
