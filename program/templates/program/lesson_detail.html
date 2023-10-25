@@ -9,5 +9,7 @@
 <p> {{lesson.created_by}} <p>
 <p> {{lesson.video}} <p>
     
+<a href="{% url "lesson_update" subject=lesson.subject.slug niveau=lesson.level.slug slug=lesson.slug %}">Update lesson</a> 
+<a href="{% url "lesson_delete" subject=lesson.subject.slug niveau=lesson.level.slug slug=lesson.slug %}">Delete lesson</a>
 
 {% endblock content %}

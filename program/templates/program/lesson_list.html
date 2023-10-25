@@ -7,5 +7,7 @@
   
 {% endfor %}
 
+<a href="{% url "lesson_create" niveau=level.slug slug=subject.slug %} ">Create new lesson</a>
+
 
 {% endblock content %}

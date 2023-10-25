@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Are you Sure to delete this lesson ?</h1>
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <input type="submit" value="Delete">
+    <!-- <button type="submit">Delete</button> -->
+</form>
+<a href="{% url "lesson_detail" subject=lesson.subject.slug niveau=lesson.level.slug slug=lesson.slug %}">Abandon </a>
+
+{% endblock content %}

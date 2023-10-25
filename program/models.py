@@ -1,6 +1,7 @@
 ################ Author: https://github.com/pemochamdev #####################
 
 from django.db import models
+from django.urls import reverse
 from django.utils.html import mark_safe
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
@@ -17,7 +18,7 @@ class Level(models.Model):
     name = models.CharField(
         max_length=100
     )
-    slug = models.SlugField()
+    slug = models.SlugField(blank=True, null=True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add = True)
 
@@ -73,9 +74,7 @@ class Lesson(models.Model):
     position = models.PositiveSmallIntegerField(
         verbose_name='CHAPTER '
     )
-    video = models.FileField(
-        upload_to="LESSONS"
-    )
+ 
     level = models.ForeignKey(
         Level, 
         on_delete=models.CASCADE, 
@@ -113,12 +112,16 @@ class Lesson(models.Model):
     class Meta:
         ordering = ['-position']
     
-    # def save(self, *args, **kwargs):
-    #     self.slug = slugify(self.name)
-    #     super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
+    
+    def get_absolute_url(self):
+        return reverse("lesson_list", kwargs={"slug": self.subject.slug, 'niveau': self.level.slug})
+    
     
     
     def get_file_type(self, file_field):
