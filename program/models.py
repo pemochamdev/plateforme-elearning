@@ -161,6 +161,65 @@ class Lesson(models.Model):
     
 
 
+class Comment(models.Model):
+    comment_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='author_comment'
+    )
+    lesson = models.ForeignKey(
+        Lesson,
+        on_delete=models.CASCADE,
+        related_name='lesson_comment',
+        null=True
+    )
+    name = models.CharField(
+        max_length=200,
+        blank=True
+    )
+    Content = models.TextField(
+        max_length=300        
+    )
+    date_added = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def save(self, *args, **kwargs):
+        self.name = slugify("comment by "+ str(self.comment_by) + "a" + str(self.date_added))
+        super(Comment, self).save(*args, **kwargs)
+
+    
+
+    class Meta:
+      ordering = ['-date_added']
+    
+
+    def __str__(self):
+        return self.name
 
 
+class Response(models.Model):
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='author_response'
+    )
+    name_comment = models.ForeignKey(
+        Comment,
+        related_name='comment',
+        on_delete=models.CASCADE
+    )
+    content = models.TextField(
+        max_length=300
+    )
+    date_added = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+    class Meta:        
+       ordering = ['date_added']
+    
+    def __str__(self):
+        return "reponse a "+self.name_comment.comment_by
     

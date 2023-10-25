@@ -2,7 +2,13 @@ from django.contrib import admin
 
 # Register your models here.
 
-from program.models import Lesson, Level, Subject
+from program.models import (
+    Comment,
+    Lesson, 
+    Level, 
+    Subject, 
+    Response
+)
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
@@ -23,3 +29,5 @@ class LessonAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
+admin.site.register(Response)
+admin.site.register(Comment)
