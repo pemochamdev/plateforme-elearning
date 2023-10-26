@@ -28,6 +28,9 @@ class LessonAdmin(admin.ModelAdmin):
     list_display = ['name', 'position','level','created_by', 'subject']
     prepopulated_fields = {"slug": ("name",)}
 
-
-admin.site.register(Response)
 admin.site.register(Comment)
+
+
+@admin.register(Response)
+class ResponseAdmin(admin.ModelAdmin):
+    list_display = ['author', 'nom_comm', 'content', 'date_added']

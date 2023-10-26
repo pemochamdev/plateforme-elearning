@@ -5,10 +5,16 @@ from program import views
 urlpatterns = [
     
     path(
-        'level-list/', 
+        '', 
         views.LevelListView.as_view(), 
         name='level_list'
     ),
+    # path(
+    #     '', 
+    #     views.level_list, 
+    #     name='lesson_list'
+    # ),
+    
     
     path(
         '<slug>/', 

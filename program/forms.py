@@ -1,4 +1,9 @@
 from django import forms
+from django import forms
+from django.db.migrations.state import get_related_models_tuples
+from .models import Comment
+from django.utils.translation import gettext_lazy as _
+
 
 from program.models import (
     Comment,
@@ -14,29 +19,34 @@ class LessonForm(forms.ModelForm):
         model = Lesson
         fields = ( 'position', 'name', 'video','fichier_pdf', 'fiche_presentation')
 
+
+
 class CommentForm(forms.ModelForm):
-    
     class Meta:
         model = Comment
-        fields = ("content",)
-        widget = {
-            'content': forms.Textarea(attrs={
-                'placeholder':'add your comment here',
-                'rows':4,
-                'cols':70
-            })
-        }
+        
 
+        fields = ['content','parent']
+        
+        labels = {
+            'content': _(''),
+        }
+        
+        widgets = {
+            'content' : forms.TextInput(),
+        }
 
 class ResponseForm(forms.ModelForm):
     
     class Meta:
         model = Response
         fields = ("content",)
-        widget = {
-            'content': forms.Textarea(attrs={
-                'placeholder':'add your response here',
+        labels = {'content': 'Reponses'}
+        widgets = {
+            'content':forms.Textarea(attrs={
+                'class':'form-control',
                 'rows':3,
-                'cols':50
+                'cols':40,
+                'placeholder':'Repondez a ce commentaire ici.'
             })
-        }
+        }  

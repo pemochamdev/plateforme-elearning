@@ -2,8 +2,8 @@
 
 {% block content %}
 
-{% for level in object_list  %}
-<a href="{% url "subject_list" level.slug %}"> {{level.name}} </a><br>
+{% for level in levels  %}
+<a href="{% url "subject_list" slug=level.slug %}"> {{level.name}} </a><br>
 
 {% endfor %}
 

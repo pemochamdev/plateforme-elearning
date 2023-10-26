@@ -160,57 +160,57 @@ class Lesson(models.Model):
         return self.get_file_type('fiche_presentation')
     
 
-
 class Comment(models.Model):
-    comment_by = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='author_comment'
+    CommentLesson = models.ForeignKey(Lesson , on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        User , 
+        on_delete=models.CASCADE
     )
-    lesson = models.ForeignKey(
-        Lesson,
-        on_delete=models.CASCADE,
-        related_name='lesson_comment',
-        null=True
-    )
-    name = models.CharField(
-        max_length=200,
-        blank=True
-    )
-    Content = models.TextField(
-        max_length=300        
-    )
-    date_added = models.DateTimeField(
+    content = models.TextField()
+    date_posted = models.DateTimeField(
         auto_now_add=True
     )
-
-    def save(self, *args, **kwargs):
-        self.name = slugify("comment by "+ str(self.comment_by) + "a" + str(self.date_added))
-        super(Comment, self).save(*args, **kwargs)
-
-    
+    parent = models.ForeignKey(
+        'self' , 
+        null=True , 
+        blank=True , 
+        on_delete=models.CASCADE , 
+        related_name='replies'
+    )
 
     class Meta:
-      ordering = ['-date_added']
-    
+        ordering=['-date_posted']
 
     def __str__(self):
-        return self.name
+        return str(self.author) + ' comment ' + str(self.content)
+
+    @property
+    def children(self):
+        return Comment.objects.filter(parent=self).reverse()
+
+    @property
+    def is_parent(self):
+        if self.parent is None:
+            return True
+        return False
 
 
 class Response(models.Model):
+    
+    nom_comm = models.ForeignKey(
+        Comment,
+        related_name='reponses',
+        on_delete=models.CASCADE,
+        blank=True,
+        null = True
+    )
+    content = models.TextField(
+        max_length=300
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='author_response'
-    )
-    name_comment = models.ForeignKey(
-        Comment,
-        related_name='comment',
-        on_delete=models.CASCADE
-    )
-    content = models.TextField(
-        max_length=300
     )
     date_added = models.DateTimeField(
         auto_now_add=True
@@ -220,6 +220,6 @@ class Response(models.Model):
     class Meta:        
        ordering = ['date_added']
     
-    def __str__(self):
-        return "reponse a "+self.name_comment.comment_by
+  
+   
     

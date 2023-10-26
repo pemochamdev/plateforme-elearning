@@ -3,31 +3,74 @@ from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView, 
     DeleteView, 
-    DetailView, 
+    DetailView,
+    FormView, 
     ListView, 
-    UpdateView
+    UpdateView,
 )
 
 # Create your views here.
-from program.models import Level, Lesson, Subject
-from program.forms import LessonForm
+from program.models import Level, Lesson, Subject, Comment
+from program.forms import LessonForm,CommentForm,ResponseForm
+
 
 
 class LevelListView(ListView):
+    context_object_name = 'levels'
     model = Level
     template_name = "program/level_list.html"
+
+
+def level_list(request):
+    template_name = "program/level_list.html"
+
+    levels = Level.objects.all()
+    context = {
+        'levels': levels
+    }
+    return render(request, template_name, context)
+
 
 
 class SubjectDetailView(DetailView):
     model = Level
     template_name = "program/subject_list.html"
-
-
+ 
 
 class LessonDetailView(DetailView):
-    context_object_name='lesson'
-    model = Lesson
-    template_name = "program/lesson_detail.html"
+    template_name = 'program/lesson_detail.html'
+
+    model= Lesson
+
+    def get_context_data(self , **kwargs):
+        data = super().get_context_data(**kwargs)
+        connected_comments = Comment.objects.filter(CommentLesson=self.get_object())
+        number_of_comments = connected_comments.count()
+        data['comments'] = connected_comments
+        data['no_of_comments'] = number_of_comments
+        data['comment_form'] = CommentForm()
+        return data
+
+    def post(self , request , *args , **kwargs):
+        if self.request.method == 'POST':
+            print('-------------------------------------------------------------------------------Reached here')
+            comment_form = CommentForm(self.request.POST)
+            if comment_form.is_valid():
+                content = comment_form.cleaned_data['content']
+                try:
+                    parent = comment_form.cleaned_data['parent']
+                except:
+                    parent=None
+
+            
+
+            new_comment = Comment(content=content , author = self.request.user , CommentLesson=self.get_object() , parent=parent)
+            new_comment.save()
+            return redirect(self.request.path_info)
+                     
+
+
+
 
 
 def lesson_list(request, slug, niveau):
@@ -89,3 +132,4 @@ class LessonDeleteView(DeleteView):
            'lesson_list', 
            kwargs={'niveau':level, 'slug': subject }
         )
+
