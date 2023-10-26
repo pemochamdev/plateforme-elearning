@@ -9,6 +9,13 @@
     <h5>Author: <i><b>{{object.created_by}}</b></i></h5>
     
     <p><span>Video: {{object.content}}</span></p>
+    {% if user.is_superuser %}
+    
+        <a href="{% url "lesson_update" niveau=lesson.level.slug slug=lesson.slug subject=lesson.subject.slug %}">Update this Lesson</a>
+        <a href="{% url "lesson_delete" niveau=lesson.level.slug slug=lesson.slug subject=lesson.subject.slug %}">Delete this Lesson</a>
+        
+    {% endif %}
+
 
 </fieldset>
 
@@ -18,7 +25,7 @@
       <form action="" method="POST" id="main_form" class="comment_form">
          <div>
              <label for="comment">Type Comment here</label>
-            {{ comment_form.content }} {% csrf_token %} <input type="submit" value="Post"></div>
+            {{ comment_form.content }} {% csrf_token %} <br> <input type="submit" value="Commnet"></div>
          </div>
       </form>
       {% else %} <h2>You need to Login to comment</h2> 
@@ -28,12 +35,17 @@
          {% if comment.is_parent %}
          <h3> <b>{{ comment.author }} : </b> {{ comment.content }}</h3> 
          &nbsp; &nbsp; &nbsp;
+         {% if user.is_authenticated %}
          <form action="" method="POST" id="main_form" class="comment_form">
             <div>
                 &nbsp; &nbsp; &nbsp;<label for="comment">Reply here</label>
-               &nbsp; &nbsp; &nbsp;<input type="text" name="content"> <input type="hidden" value="{{ comment.pk }}" name="parent"> {% csrf_token %} <input type="submit" value="Post"></div>
+               &nbsp; &nbsp; &nbsp;<input type="text" name="content"> <input type="hidden" value="{{ comment.pk }}" name="parent"> {% csrf_token %}
+               <br>
+               &nbsp; &nbsp; &nbsp;<input type="submit" value="Reply"></div>
             </div>
          </form>
+         {% else %} <h2>You need to Login to Reply</h2> 
+         {% endif %}
          {% endif %} 
          
          {% for replies in comment.children %}

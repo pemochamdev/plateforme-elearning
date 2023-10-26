@@ -7,7 +7,8 @@
   
 {% endfor %}
 
-<a href="{% url "lesson_create" niveau=level.slug slug=subject.slug %} ">Create new lesson</a>
-
+{% if user.is_superuser %}
+    <a href="{% url "lesson_create" niveau=level.slug slug=subject.slug %} ">Create new lesson</a>
+{% endif %}
 
 {% endblock content %}
